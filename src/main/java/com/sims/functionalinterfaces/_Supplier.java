@@ -1,8 +1,11 @@
 package com.sims.functionalinterfaces;
 
+import com.sims.imperative.Main;
+
 import java.util.function.Supplier;
 
 public class _Supplier {
+    
     public static void main(String[] args) {
         System.out.println("Imperative approach: " + getId());
     
