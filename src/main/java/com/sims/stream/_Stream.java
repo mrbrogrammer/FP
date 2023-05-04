@@ -4,6 +4,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.*;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
 
@@ -21,10 +23,6 @@ public class _Stream {
                 new Person("Bella", FEMALE),
                 new Person("George", MALE)
         );
-        
-        LongStream longStream = people.stream().filter(x -> "Bella".equals(x.name)).mapToLong(x -> x.name.length());
-    
-        System.out.println("longStream.sum() = " + longStream.sum());
     
         // filter
         Predicate<Person> isPeter = x -> Objects.equals(x.name, "John");
@@ -66,26 +64,56 @@ public class _Stream {
     
         // sorted
         Comparator<Person> personComparator = (t, u) -> t.name.compareTo(u.name); // We can also avoid defining the comparison logic by using Comparator.comparing()
-        System.out.println(people.stream().sorted(personComparator).toList());
+        System.out.println("Sorted: " + people.stream()
+                .sorted(personComparator)
+                .toList());
         
         // distinct
-        System.out.println(people.stream().distinct().toList());
+        System.out.println("Distinct: " + people.stream().distinct().toList());
         
         // allMatch
         Predicate<Person> allMatchPredicate = x -> "George".equals(x.name);
-        boolean allMatch = people.stream().allMatch(allMatchPredicate);
-        System.out.println(allMatch);
+        boolean allMatch = people.stream()
+                .allMatch(allMatchPredicate);
+        System.out.println("allMatch: " + allMatch);
     
         // anyMatch
         Predicate<Person> anyMatchPredicate = x -> "George".equals(x.name);
-        boolean anyMatch = people.stream().anyMatch(anyMatchPredicate);
-        System.out.println(anyMatch);
+        boolean anyMatch = people.stream()
+                .anyMatch(anyMatchPredicate);
+        System.out.println("anyMatch: " + anyMatch);
         
         // noneMatch
         Predicate<Person> noneMatchPredicate = x -> "George".equals(x.name);
-        boolean noneMatch = people.stream().noneMatch(noneMatchPredicate);
-        System.out.println(noneMatch);
+        boolean noneMatch = people.stream()
+                .noneMatch(noneMatchPredicate);
+        System.out.println("noneMatch: " + noneMatch);
+        
+        // sum
+        LongStream longStream = people.stream()
+                .filter(x -> "Bella".equals(x.name))
+                .mapToLong(x -> x.name.length());
+        System.out.println("Sum: " + longStream.sum());
+        
+        // range
+        IntStream intStream = IntStream.range(1, 11); // infinite stream
+        System.out.print("Range: ");
+        intStream.forEach(System.out::print);
     
+        // average
+        System.out.println();
+        IntStream averageIntStream = IntStream.range(1, 11);
+        System.out.println("Average: " + averageIntStream.average().orElse(0));
+        
+        // reduce
+        ToIntFunction<Person> personToIntFunction = x -> x.name.length();
+        IntBinaryOperator intBinaryOperator = Integer::sum; // Can also be: (x, y) -> x + y
+        int reduce = people.stream()
+                .mapToInt(personToIntFunction)
+                .reduce(0, intBinaryOperator);
+        System.out.println("Reduce: " + reduce);
+        
+        //
     
     }
     
