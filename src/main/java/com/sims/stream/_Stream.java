@@ -1,17 +1,19 @@
 package com.sims.stream;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.function.ToIntFunction;
+import java.util.function.*;
+import java.util.stream.Collectors;
 import java.util.stream.LongStream;
+import java.util.stream.Stream;
 
 import static com.sims.stream._Stream.Gender.FEMALE;
 import static com.sims.stream._Stream.Gender.MALE;
 
 public class _Stream {
+    
+
     
     public static void main(String[] args) {
     
@@ -43,7 +45,8 @@ public class _Stream {
                 .mapToInt(stringToIntFunction).max().orElse(0));
         
         // findFirst
-        people.stream().findFirst().get().name = people.stream().filter(x -> x == people.get(people.size() -1)).findFirst().get().name;
+        Predicate<Person> personPredicate = x -> x == people.get(people.size() - 1);
+        people.stream().findFirst().get().name = people.stream().filter(personPredicate).findFirst().get().name;
 
         // peek
         Consumer<Person> changeGender = x -> x.gender = MALE;
@@ -51,7 +54,27 @@ public class _Stream {
                 .peek(changeGender)
                 .peek(System.out::println)
                 .toList();
+    
+    
+        // infinite streams
+        UnaryOperator<Integer> integerUnaryOperator = i -> i * 2;
+        Stream<Integer> infiniteStream = Stream.iterate(1, integerUnaryOperator);
+        List<Integer> collect = infiniteStream
+                .limit(5)
+                .collect(Collectors.toList());
         
+        collect.forEach(System.out::println);
+    
+        // sorted
+        Comparator<Person> personComparator = (t, u) -> t.name.compareTo(u.name); // We can also avoid defining the comparison logic by using Comparator.comparing()
+        System.out.println(people.stream().sorted(personComparator).toList());
+        
+        // distinct
+        
+        
+    
+        System.out.println(people.stream().distinct().toList());
+    
     }
     
     static class Person {
@@ -62,6 +85,14 @@ public class _Stream {
         public Person(String name, Gender gender) {
             this.name = name;
             this.gender = gender;
+        }
+    
+        @Override
+        public boolean equals(Object obj) {
+        
+            Person person = (Person) obj;
+        
+            return this.name.equals(person.name);
         }
 
         @Override
