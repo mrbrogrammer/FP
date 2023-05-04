@@ -4,7 +4,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.*;
-import java.util.stream.Collectors;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
 
@@ -23,7 +22,7 @@ public class _Stream {
                 new Person("George", MALE)
         );
         
-        LongStream longStream = people.stream().filter(x -> x.name == "Bella").mapToLong(x -> x.name.length());
+        LongStream longStream = people.stream().filter(x -> "Bella".equals(x.name)).mapToLong(x -> x.name.length());
     
         System.out.println("longStream.sum() = " + longStream.sum());
     
@@ -54,14 +53,14 @@ public class _Stream {
                 .peek(changeGender)
                 .peek(System.out::println)
                 .toList();
-    
+        
     
         // infinite streams
         UnaryOperator<Integer> integerUnaryOperator = i -> i * 2;
         Stream<Integer> infiniteStream = Stream.iterate(1, integerUnaryOperator);
         List<Integer> collect = infiniteStream
                 .limit(5)
-                .collect(Collectors.toList());
+                .toList();
         
         collect.forEach(System.out::println);
     
@@ -70,10 +69,23 @@ public class _Stream {
         System.out.println(people.stream().sorted(personComparator).toList());
         
         // distinct
-        
-        
-    
         System.out.println(people.stream().distinct().toList());
+        
+        // allMatch
+        Predicate<Person> allMatchPredicate = x -> "George".equals(x.name);
+        boolean allMatch = people.stream().allMatch(allMatchPredicate);
+        System.out.println(allMatch);
+    
+        // anyMatch
+        Predicate<Person> anyMatchPredicate = x -> "George".equals(x.name);
+        boolean anyMatch = people.stream().anyMatch(anyMatchPredicate);
+        System.out.println(anyMatch);
+        
+        // noneMatch
+        Predicate<Person> noneMatchPredicate = x -> "George".equals(x.name);
+        boolean noneMatch = people.stream().noneMatch(noneMatchPredicate);
+        System.out.println(noneMatch);
+    
     
     }
     
@@ -85,14 +97,6 @@ public class _Stream {
         public Person(String name, Gender gender) {
             this.name = name;
             this.gender = gender;
-        }
-    
-        @Override
-        public boolean equals(Object obj) {
-        
-            Person person = (Person) obj;
-        
-            return this.name.equals(person.name);
         }
 
         @Override
