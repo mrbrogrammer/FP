@@ -1,8 +1,6 @@
 package com.sims.stream;
 
-import java.util.Comparator;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -113,7 +111,53 @@ public class _Stream {
                 .reduce(0, intBinaryOperator);
         System.out.println("Reduce: " + reduce);
         
-        //
+        // joining
+        Function<Person, String> getNames = x -> x.name;
+        String joinNames = people.stream()
+                .map(getNames)
+                .distinct()
+                .collect(Collectors.joining(", "));
+        System.out.println("Joining: " + joinNames);
+        
+        // toSet
+        Set<Gender> genderSet = people.stream().map(x -> x.gender).collect(Collectors.toSet());
+        System.out.println("toSet: " + genderSet);
+        
+        // toCollection
+        Vector<String> stringVector = people.stream()
+                .map(x -> x.name)
+                .collect(Collectors.toCollection(() -> new Vector<>()));
+        System.out.println("toCollection: " + stringVector);
+        
+        // summarisingStatistics
+        IntSummaryStatistics intSummaryStatistics = people.stream()
+                .mapToInt(x -> x.name.length())
+                .summaryStatistics();
+        System.out.print("SummaryStatistics: ");
+        System.out.print("getCount=" + intSummaryStatistics.getCount() + ", ");
+        System.out.print("getMin=" + intSummaryStatistics.getMin() + ", ");
+        System.out.print("getMax=" + intSummaryStatistics.getMax() + ", ");
+        System.out.print("getSum=" + intSummaryStatistics.getSum() + ", ");
+        System.out.println("getAverage=" + intSummaryStatistics.getAverage());
+        
+        // partitioningBy
+        Stream<Integer> stream = Stream.of(1, 2, 3, 4, 5, 6, 7, 8);
+        Map<Boolean, List<Integer>> listMap = stream.
+                collect(Collectors.partitioningBy(x -> x % 2 == 0));
+        System.out.print("PartitioningBy: true=" + listMap.get(true) + " ");
+        System.out.println("false=" + listMap.get(false));
+        
+        // groupingBy
+        Map<Character, List<Person>> characterListMap = people.stream()
+                .collect(Collectors.groupingBy(x -> x.name.charAt(0)));
+        System.out.println("GroupingBy: " + characterListMap.get('G'));
+        
+        // mapping
+        Map<Character, List<String>> characterStringsMap = people.stream()
+                .collect(Collectors.groupingBy(x -> x.name.charAt(0), Collectors.mapping((t) -> t.name, Collectors.toList())));
+        System.out.println("Mapping: " + characterStringsMap.get('B'));
+        
+        
     
     }
     
